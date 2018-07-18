@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" >
+    <title>video</title>
+    <link rel="stylesheet" href="/static/css/video-player/videoCT.css">
+    <link rel="stylesheet" href="/static/css/video-player/view-moive.css">
+<link rel="stylesheet" href="/static/css/video-player/comment.css">
+<!--<link rel="stylesheet" href="/static/css/video-player/bootstrap.css">-->
+<link rel="stylesheet" href="/static/css/style.css">
+<link rel="stylesheet" href="/static/css/bootstrap.min.css">
+<script type="text/javascript" src="/static/js/vue.min.js"></script>
+<script type="text/javascript" src="/static/js/sha1.min.js"></script>
+    <script type='text/javascript' src="/static/js/video-player/jquery.min.js"></script>
+    <script type='text/javascript' src="/static/js/video-player/bootstrap.min.js"></script>
+    <script type='text/javascript' src="/static/js/video-player/videoCT.js"></script>
+	<script type='text/javascript' src="/static/js/video-player/view-moive.js"></script>
+<style type="text/css">
+
+.picTab{height:100%;border:2px solid #000; margin-left:60%;overflow:hidden;
+width:30%;
+}
+
+</style>
+<style type="text/css">
+body{ color:#333; font-size:13px;}
+h3,ul,li{margin:0;padding:0; list-style:none;}
+.scrollbox{ width: 100%; height:100%; margin-top:0; overflow: hidden; border: 0px solid #CFCFCF; padding: 10px; }
+#scrollDiv{width:100%;height:90%; overflow:hidden;}/*这里的高度和超出隐藏是必须的*/
+#scrollDiv li{height:40px; width:100%; color:#d4d4d4; padding:0 20px;background:url() no-repeat 10px 23px; overflow:hidden; vertical-align:bottom; zoom:1; border-bottom:#B7B7B7 dashed 0px;}
+#scrollDiv li div{ height:36px; width:300px; color:#416A7F; line-height:18px; overflow:hidden}
+#scrollDiv li div a{ color:#416A7F; text-decoration:none}
+
+.scroltit{ height:26px; line-height:26px; padding-bottom:0px; margin-bottom:0px;}
+.scroltit h3{ width:100px; float:left;}
+.scroltit .updown{float:right; width:32px; height:22px; margin-left:4px}
+#but_up{ background:url(/static/images/video-player/up.gif) no-repeat 0 0; text-indent:-9999px}
+#but_down{ background:url(/static/images/video-player/down.gif) no-repeat 0 0; text-indent:-9999px}
+
+@media screen and (min-height:400px){
+      .responsive
+      {
+        top:35%;
+      }
+    }
+
+.input-width{
+	width:350px;
+}
+</style>
+
+
+<script src="/static/js/video-player/jq_scroll.js" type="text/javascript"></script>
+<script type="text/javascript">
+$(document).ready(function(){
+     $("#scrollDiv").Scroll({line:1,speed:500,timer:3000,up:"but_up",down:"but_down"});
+});
+</script>
+</head>
+<body>
+	 <div id="navigation">
+		 <div class="container">
+                          <div class="row">
+                             <div class="col-xs-6">
+                                 <div class="logo"><a data-l10n-id="base_title" class="logo-text">Join Slowlife</a></div>
+                            </div>
+                                         
+					     	<div id="register" class="register">
+                            	<a  data-toggle="modal" data-target="#myModal1">login</button>
+								<span></span>
+								<a data-toggle="modal" data-target="#myModal2">register</a>
+							</div>
+        				 </div>
+	 	</div>
+   </div>
+<!--   <h2>创建模态框（Modal）</h2>
+ 按钮触发模态框 -->
+<!--<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+	开始演示模态框
+</button>-->
+<!-- 模态框（Modal） -->
+<div class="modal fade responsive" id="myModal1" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog input-width">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+				Please Login
+				</h4>
+			</div>
+			<div class="modal-body">
+				<input type="text" v-model.trim="confirm.aaa" placeholder="name">
+			</div>
+			<div class="modal-body">
+				<input type="password" v-model.trim="confirm.password" maxlength="50" placeholder="password">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">cancel
+				</button>
+				<button type="button" class="btn btn-primary" v-on:click="confirm">
+					login
+				</button>
+			</div>
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+	<script type="text/javascript">
+		console.log("this")
+		new Vue({
+		el:"#myModal1",
+		data:{
+		},
+		methods:{
+			confirm:function(){
+				console.log("this2")
+				if (! this.confirm.aaa){
+					return alert("name is null!");
+				}
+				if (! this.confirm.password){
+					return alert("password is null!")
+				}
+				var login_url = "/user/login"
+				var login_request = new XMLHttpRequest();
+				login_request.onload = function(){
+					if (login_request.status == 200){
+						if (login_request.responseText == "name is not exist!"){
+							return alert("name or password is error!")
+						}
+						$('#myModal1').modal('hide')
+						document.getElementById("register").innerHTML = login_request.responseText
+						setCookie("user_name",user_name,4);
+						return alert(login_request.responseText)
+					}else{
+						return alert("name or password is error!")
+					}
+				}
+				var user_name = this.confirm.aaa;
+				login_data = '{"name":"'+this.confirm.aaa+'","password":"'+CryptoJS.SHA1(this.confirm.password).toString()+'"}'
+				login_request.open("POST",login_url,true)
+                login_request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;");
+				login_request.send(login_data)
+			}
+		}
+		});
+	</script>
+<div class="modal fade responsive" id="myModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog input-width">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                Please Register
+                </h4>
+            </div>
+            <div class="modal-body">
+                <input type="text" maxlength="50" v-model.trim="confirm2.aaa" placeholder="name">
+            </div>
+			<div class="modal-body">
+                <input type="text" maxlength="50" v-model.trim="confirm2.email" placeholder="email">
+            </div>
+            <div class="modal-body">
+                <input type="password" maxlength="50" v-model.trim="confirm2.password1" placeholder="password">
+            </div>
+			<div class="modal-body">
+                <input type="password" maxlength="50" v-model.trim="confirm2.password2" placeholder="confirm password">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">cancel
+                </button>
+                <button type="button" class="btn btn-primary" v-on:click="confirm2"> 
+                    register
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+<script type="text/javascript">
+	function validateEmail(email) {
+    var re = /^[a-z0-9\.\-\_]+\@[a-z0-9\-\_]+(\.[a-z0-9\-\_]+){1,4}$/;
+    return re.test(email.toLowerCase());
+}
+        new Vue({
+        el:"#myModal2",
+        data:{
+        },
+        methods:{
+            confirm2:function(){
+                if (! this.confirm2.aaa){
+                    return alert("name or email is null!");
+                }
+                if (! this.confirm2.email){
+                    return alert("email is null!")
+                }
+				if (! validateEmail(this.confirm2.email.toLowerCase())){
+					return alert("Bad email address format！")
+				}
+				if (! this.confirm2.password1){
+                    return alert("password is null!")
+                }
+				if (this.confirm2.password1.length < 6 ){
+					return alert("password's length less than six!")
+				}
+				if (this.confirm2.password1 !== this.confirm2.password2){
+					return alert("The passwod entered twice is different!")
+				}
+		 		var register_url = "/user/register"
+				var register_request = new XMLHttpRequest();
+				register_request.onload = function(){
+					if (register_request.status == 200){
+						$('#myModal2').modal('hide')
+						alert(register_request.responseText)
+					}else{
+						alert("sorry!register failed!")
+					}
+				};
+				var register_data = '{"name":"'+this.confirm2.aaa+'","email":"'+this.confirm2.email+'","password":"'+CryptoJS.SHA1(this.confirm2.password1).toString()+'"}'
+				register_request.open("POST",register_url,true);
+				register_request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded;");
+				register_request.send(register_data);
+
+            }
+        }
+        });
+    </script>
+  <div class="playersection">
+	<div id="video-player">
+        <video width="100%" height="100%" id="video1"></video>
+  </div>
+<DIV class="picTab">
+<div class="pic-title">
+<table width=100% height=40px>
+					<colgroup>
+						<col style="width:25%;" />
+						<col style="width:60%;" />
+						<col style="width:15%;" />
+					</colgroup>
+					<thead style="color:white;text-aligin:center;">
+						<tr>
+                        <th id="recommend_view_song_name" style="text-align:center;">Date</th>
+                        <th id="recommend_view_song_type" style="text-align:center;">Comment</th>
+                        <th id="recommend_view_name" style="text-align:center;">UserType</th>
+                    </tr>
+
+					</thead>
+
+				</table>
+</div>
+<div class="scrollbox">
+    <div id="scrollDiv">
+        <ul>
+            <li><table width=100% height=20px>
+                    <colgroup>
+                        <col style="width:25%;" />
+                        <col style="width:60%;" />
+                        <col style="width:15%;" />
+                    </colgroup>
+                    <thead style="color:white;text-aligin:center;">
+                        <tr>
+                        <th id="recommend_view_song_name" style="text-align:center;">2018-03-10 11:23:90</th>
+                        <th id="recommend_view_song_type" style="text-align:center;">1very nice! thank recommend by fured,love you!</th>
+                        <th id="recommend_view_name" style="text-align:center;">custom</th>
+                    </tr>
+                    </thead>
+                </table>
+</li>
+<li><table width=100% height=20px>
+                    <colgroup>
+                        <col style="width:25%;" />
+                        <col style="width:60%;" />
+                        <col style="width:15%;" />
+                    </colgroup>
+                    <thead style="color:white;text-aligin:center;">
+                        <tr>
+                        <th id="recommend_view_song_name" style="text-align:center;">2018-03-10 11:23:90</th>
+                        <th id="recommend_view_song_type" style="text-align:center;">2very nice! thank recommend by fured,love you!</th>
+                        <th id="recommend_view_name" style="text-align:center;">custom</th>
+                    </tr>
+                    </thead>
+                </table>
+</li>
+<li><table width=100% height=20px>
+                    <colgroup>
+                        <col style="width:25%;" />
+                        <col style="width:60%;" />
+                        <col style="width:15%;" />
+                    </colgroup>
+                    <thead style="color:white;text-aligin:center;">
+                        <tr>
+                        <th id="recommend_view_song_name" style="text-align:center;">2018-03-10 11:23:90</th>
+                        <th id="recommend_view_song_type" style="text-align:center;">3very nice! thank recommend by fured,love you!</th>
+                        <th id="recommend_view_name" style="text-align:center;">custom</th>
+                    </tr>
+					</thead>
+	</table>
+</li>
+<li><table width=100% height=20px>
+                    <colgroup>
+                        <col style="width:25%;" />
+                        <col style="width:60%;" />
+                        <col style="width:15%;" />
+                    </colgroup>
+                    <thead style="color:white;text-aligin:center;">
+                        <tr>
+                        <th id="recommend_view_song_name" style="text-align:center;">2018-03-10 11:23:90</th>
+                        <th id="recommend_view_song_type" style="text-align:center;">4very nice! thank recommend by fured,love you!</th>
+                        <th id="recommend_view_name" style="text-align:center;">custom</th>
+                    </tr>
+                    </thead>
+                </table>
+</li>
+<li><table width=100% height=20px>
+                    <colgroup>
+                        <col style="width:25%;" />
+                        <col style="width:60%;" />
+                        <col style="width:15%;" />
+                    </colgroup>
+                    <thead style="color:white;text-aligin:center;">
+                        <tr>
+                        <th id="recommend_view_song_name" style="text-align:center;">2018-03-10 11:23:90</th>
+                        <th id="recommend_view_song_type" style="text-align:center;">5very nice! thank recommend by fured,love you!</th>
+                        <th id="recommend_view_name" style="text-align:center;">custom</th>
+                    </tr>
+                    </thead>
+                </table>
+</li>
+<li><table width=100% height=20px>
+                    <colgroup>
+                        <col style="width:25%;" />
+                        <col style="width:60%;" />
+                        <col style="width:15%;" />
+                    </colgroup>
+                    <thead style="color:white;text-aligin:center;">
+                        <tr>
+                        <th id="recommend_view_song_name" style="text-align:center;">2018-03-10 11:23:90</th>
+                        <th id="recommend_view_song_type" style="text-align:center;">6very nice! thank recommend by fured,love you!</th>
+                        <th id="recommend_view_name" style="text-align:center;">custom</th>
+                    </tr>
+                    </thead>
+                </table>
+</li>
+<li><table width=100% height=20px>
+                    <colgroup>
+                        <col style="width:25%;" />
+                        <col style="width:60%;" />
+                        <col style="width:15%;" />
+                    </colgroup>
+                    <thead style="color:white;text-aligin:center;">
+                        <tr>
+                        <th id="recommend_view_song_name" style="text-align:center;">2018-03-10 11:23:90</th>
+                        <th id="recommend_view_song_type" style="text-align:center;">7very nice! thank recommend by fured,love you!</th>
+                        <th id="recommend_view_name" style="text-align:center;">custom</th>
+                    </tr>
+                    </thead>
+                </table>
+</li>
+
+        </ul>
+    </div>
+    <div class="scroltit"><div class="updown" id="but_down">向上</div><div class="updown" id="but_up">向下</div></div>
+</div>	
+</DIV>
+     </div>
+<div class="commentsection">
+	<div class="commentbox">
+		<textarea cols="80" rows="50" placeholder="来说几句吧......" class="mytextarea" id="content"></textarea>
+		<div class="btn btn-info pull-right" id="comment" type="button" onclick="submit_comment()">评论</div>
+	</div>
+	<div class="comment-list">
+	<!-- 
+		<div class="comment-info">
+			<header><img src="./images/img.jpg"></header>
+			<div class="comment-right">
+				<h3>匿名</h3>
+				<div class="comment-content-header"><span><i class="glyphicon glyphicon-time"></i> 2017-10-17 11:42:53</span><span><i class="glyphicon glyphicon-map-marker"></i>深圳</span></div>
+				<p class="content">mongodb 副本集配置副本集概念：就我的理解就是和主从复制 差不多，就是在主从复制的基础上多加了一个选举的机制。
+				复制集 特点：数据一致性 主是唯一的，没有Mysql 那样的双主结构大多数原则，集群存活节点小于二分之一是集群不可写，
+				只可读从库无法写入数据自动容灾通过下面的一个图来简单的了解下
+				 配置过程：一、安装mongodb安装过程略，不懂得可以看前面的教程二、创建存储目录与配置文件创...</p>
+				<div class="comment-content-footer">
+					<div class="row">
+						<div class="col-md-10">
+							<span><i class="glyphicon glyphicon-pushpin"></i> 来自:win10 </span><span><i class="glyphicon glyphicon-globe"></i> chrome 55.0.2883.87</span>
+						</div>
+						<div class="col-md-2"><span class="reply-btn">回复</span></div>
+					</div>
+				</div>
+				<div class="reply-list"></div>
+			</div>
+		</div>
+		
+		-->
+		
+		
+	</div>
+</div>
+<script type="text/javascript" src="/static/js/video-player/jquery.comment.js" ></script>
+<script type="text/javascript">
+	console.log("init comment data!")
+	var url = "/movie_comment/init/"
+	var request = new XMLHttpRequest();
+	request.onload = function(){
+		if (request.status == 200){
+			var arr = []
+			var json_data = JSON.parse(request.responseText)
+			console.log(json_data.length)
+			for (var i = 0;i < json_data.length;i++){
+				arr[i] = json_data[i]
+			}
+			console.log(arr)
+			console.log(typeof(request.responseText))
+		}
+	}
+	request.open('GET',url,true)
+	request.send()
+	//初始化数据
+	var arr = [
+		{id:2,img:"/static/images/img.jpg",replyName:"匿名",beReplyName:"",content:"到菜市场买菜，看到一个孩子在看摊，我问：“一只鸡多少钱？” 那孩子回答：“23。” 我又问：“两只鸡多少钱？” 孩子愣了一下，一时间没算过来，急中生智大吼一声：“一次只能买一只！”",time:"2017-10-17 11:42:53",address:"深圳",osname:"",browse:"谷歌",replyBody:[{id:3,img:"",replyName:"帅大叔",beReplyName:"匿名",content:"来啊，我们一起吃鸡",time:"2017-10-17 11:42:53",address:"",osname:"",browse:"谷歌"}]},
+		{id:3,img:"/static/images/img.jpg",replyName:"帅大叔",beReplyName:"匿名",content:"同学聚会，看到当年追我的屌丝开着宝马车带着他老婆来了，他老婆是我隔壁宿舍的同班同学，心里后悔极了。",time:"2017-10-17 11:42:53",address:"深圳",osname:"win10",browse:"谷歌",replyBody:[]}
+	];
+	$(function(){
+		$(".comment-list").addCommentList({data:arr,add:""});
+		$("#comment").click(function(){
+			var obj = new Object();
+			obj.img="/static/images/img.jpg";
+			obj.replyName="匿名";
+			obj.content=$("#content").val();
+			obj.browse="深圳";
+			obj.osname="win10";
+			obj.replyBody="";
+			$(".comment-list").addCommentList({data:[],add:obj});
+		});
+	})
+
+
+</script>
+</body>
+</html>

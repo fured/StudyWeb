@@ -1,0 +1,55 @@
+function download_music(id){
+	var recommend_table = document.getElementById("recommend_table");
+	console.log("start download");
+	//console.log(id.parentElement.rowIndex);
+	//console.log(id.cellIndex+1);
+	//console.log(recommend_table.rows[id.parentElement.rowIndex].cells[0].innerHTML);
+	var song_name=recommend_table.rows[id.parentElement.rowIndex].cells[0].innerHTML;
+	console.log(song_name);
+    download("/static/music/"+song_name+".mp3",song_name+".mp3","audio/mpeg");	
+}
+
+window.onload=function (){
+	console.log("language")
+	console.log(lang);
+	view_all_recommend();
+}
+function view_all_recommend(){
+	console.log(lang);
+	if (lang == "zh"){
+		var url = "../recommend/language";
+		var request = new XMLHttpRequest();
+		request.onload = function(){
+			if (request.status == 200){
+				recommend_transform(request.responseText)
+			}
+		};
+		request.open("GET",url+"/?lang="+lang,true);
+		request.send();
+	}else{
+	//	window.location.href="/view/recommend_music"
+		window.open('/view/recommend_music');
+	//	window.history.back(-1);
+	}
+}
+
+function recommend_transform(json_str){
+	var language = JSON.parse(json_str);
+	document.getElementById("base_title").innerHTML = language["base_title"];
+	document.getElementById("moudle_slogan").innerHTML = language["moudle_slogan"];
+	document.getElementById("recommend_submit_nick_name").placeholder = language["recommend_submit"]["nick_name"];
+	document.getElementById("recommend_submit_song_name").placeholder = language["recommend_submit"]["song_name"];
+	document.getElementById("recommend_submit_reason").placeholder = language["recommend_submit"]["recommend_reason"];
+	document.getElementById("recommend_submit_song_type_one").innerHTML = language["recommend_submit"]["song_type"]["one"];
+	document.getElementById("recommend_submit_song_type_two").innerHTML = language["recommend_submit"]["song_type"]["two"];
+	document.getElementById("recommend_submit_song_type_three").innerHTML = language["recommed_submit"]["song_type"]["three"];
+	document.getElementById("recommend_submit_song_type_four").innerHTML = language["recommend_submit"]["song_type"]["four"];
+	document.getElementById("recommend_submit_button").innerHTML = language["recommend_submit"]["submit"];
+	document.getElementById("recommend_view_song_name").innerHTML = language["recommend_view"]["song_name"];
+	document.getElementById("recommend_view_song_type").innerHTML = language["recommend_view"]["song_type"];
+	document.getElementById("recommend_view_name").innerHTML = language["recommend_view"]["recommend_name"];
+	document.getElementById("recommend_view_reason").innerHTML = language["recommend_view"]["recommend_reason"];
+	document.getElementById("recommend_view_date").innerHTML = language["recommend_view"]["date"];
+	document.getElementById("recommend_view_operating").innerHTML = language["recommend_view"]["operating"];
+	document.getElementById("recommend_view_download").innerHTML = language["recommend_view"]["download"];
+}
