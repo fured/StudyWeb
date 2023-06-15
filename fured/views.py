@@ -46,7 +46,6 @@ def register(request):
     user.user_email = data_py["email"]
     user.user_password = data_py["password"]
     user.save()
-    print data
     return HttpResponse("Register success!")
 
 def login(request):
@@ -97,8 +96,7 @@ def recommend_music(request):
     return render(request,"recommend_music_table.html",{"list":recommends_list,"lang":current_lang})
 
 	
-def playlist(request):
-	print "play list"
+def playlist(request):	
 	song_list = []
 	i = 0 
 	all_song_name = PlayMusicTable.objects.all().values('storage_path')
@@ -109,7 +107,6 @@ def playlist(request):
 	return HttpResponse(json.dumps(song_list))
 
 def recommend(request):
-	print "this"
 	data = request.body
 	data_py = json.loads(data)
 	lang = data_py["lang"]
@@ -124,7 +121,7 @@ def recommend(request):
 		reponse = "分享成功！谢谢"+data_py["nickname"]+"!"
 	else:
 		reponse = "recommend success!thank you:"+data_py["nickname"]+"!"
-	print reponse
+	
 	return HttpResponse(reponse)
 
 def movie_comment_submit(request):

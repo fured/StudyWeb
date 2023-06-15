@@ -25,7 +25,7 @@ SECRET_KEY = 'xo6vkgz)ok&i7)1a&t-@apkh289k2_@ilb%#+rc(m#6ohlgsy='
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["192.168.0.3",'127.0.0.1','fured-slowlife.com']
+ALLOWED_HOSTS = ["101.43.12.52",'127.0.0.1','fured-slowlife.com', "localhost"]
 
 
 # Application definition
@@ -74,23 +74,25 @@ WSGI_APPLICATION = 'slowlife.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-#DATABASES = {
- #   'default': {
-  #      'ENGINE': 'django.db.backends.sqlite3',
-   #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-   # }
-#}
-
+# sqlite
 DATABASES = {
-        'default': {
-            'ENGINE':'django.db.backends.mysql',
-            'NAME':'slowlife',
-            'USER':'slowlife',
-            'PASSWORD':'',
-            'PORT':3306,
-            'HOST':'127.0.0.1',
-        }
+   'default': {
+       'ENGINE': 'django.db.backends.sqlite3',
+       'NAME': os.path.join(BASE_DIR, 'slowlife_demo.db'),
+   }
 }
+
+# mysql
+# DATABASES = {
+#         'default': {
+#             'ENGINE':'django.db.backends.mysql',
+#             'NAME':'slowlife',
+#             'USER':'slowlife',
+#             'PASSWORD':'',
+#             'PORT':3306,
+#             'HOST':'127.0.0.1',
+#         }
+# }
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
